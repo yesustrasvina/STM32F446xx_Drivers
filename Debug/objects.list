@@ -1,0 +1,7 @@
+"./Drivers/Src/Scheduler_Round_Robin.o"
+"./Drivers/Src/stm32f446xx_gpio_driver.o"
+"./Drivers/Src/stm32f446xx_spi_driver.o"
+"./Src/Scheduler.o"
+"./Src/syscalls.o"
+"./Src/sysmem.o"
+"./Startup/startup_stm32f446retx.o"
