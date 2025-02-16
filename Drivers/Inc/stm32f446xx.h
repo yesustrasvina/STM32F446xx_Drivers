@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #define __vo volatile
+#define __weak __atribbute__((weak))
 
 /*CORTEX M4 Processor specific*/
 /*Interrupt Set-enable Registers*/
@@ -24,6 +25,21 @@
 
 /*Interrupt Priority Registers*/
 #define NVIC_IPR_BASE_ADDR ((__vo uint32_t*)0xE000E400)
+
+/*Systick registers*/
+#define SYST_RVR		((__vo uint32_t*)0xE000E014U) // Systick reload value register
+#define SYST_CSR		((__vo uint32_t*)0xE000E010U) // Systick control and status register
+
+/* Systick Control and Status Register Bits positions */
+#define TICKINT_BIT			1
+#define CLKSOURCE_BIT		2
+#define SYSTICK_ENABLE_BIT	0
+
+/* System Control Block Registers */
+#define ICSR			((__vo uint32_t*)0xE000ED04U)
+
+/* Interrupt Control and State Register Bits positions */
+#define PENDSVSET_BIT	28
 
 
 /*----------BASE ADDRESSES BEGIN----------*/
