@@ -10,6 +10,8 @@
 
 #include "stm32f446xx.h"
 
+#define MAX_TASKS		5
+
 /*Stack Memory Calculations*/
 /*SRAM1 BEGINS 0x20000000 end in 0x2001BFFF*/
 /*SRAM2 BEGINS 0x2001C000 end in 0x2001FFFF*/
@@ -28,7 +30,40 @@
 #define IDLE_STACK_START			((SRAM_END) - (4 * SIZE_TASK_STACK))
 #define SCHEDULER_STACK_START		((SRAM_END) - (5 * SIZE_TASK_STACK))
 
+/* Systick Timer Configurations defines */
+#define TICK_HZ				1000U //Tick Exception frequency
+#define HSI_CLOCK 			16000000U // Internal MCU frequency
+#define SYSTIM_TIM_CLK		HSI_CLOCK // Systick timer source clock
+
+/* Defines for context initial values */
+#define DUMMY_XPSR			0x1000000U // T_Bit = 1
+#define EXC_RETURN			0xFFFFFFFDU /// Return to thread mode and use PSP
+
+#define TASK_RUNNING_STATE 0x00
+#define TASK_BLOCKED_STATE 0xFF
+
+/* Task Control Block (TCB) Structure Definition */
+typedef struct
+{
+	uint32_t psp_value;					// Process stack pointer (PSP)
+	uint32_t block_count;				// Tick count when task is unblocked
+	uint8_t current_state;				// Current state of the task (RUNNING,BLOCKED)
+	void (*task_handler)(void);   		// Pointer o the function (task handler) that the task executes
+}TCB_t;
+
+extern uint8_t current_task;
+extern uint32_t g_tick_count;
+
 __attribute__ ((naked)) void init_scheduler_stack(uint32_t scheduler_stack_start);
+void init_systick_timer(uint32_t tick_hz);
+void init_tasks_stack(void);
+__attribute__((naked)) void switch_sp_to_psp(void);
+uint32_t get_psp_value(void);
+void SysTick_Handler(void);
+void update_global_tick_count(void);
+__attribute__((naked)) void PendSV_Handler(void);
+void save_psp_value(uint32_t current_psp_value);
+void unblock_tasks(void);
 
 /*Task Handlers*/
 void task1_handler(void);
