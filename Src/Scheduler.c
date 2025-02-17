@@ -31,6 +31,9 @@ int main(void)
 	init_systick_timer(TICK_HZ);
 
 	task1_handler(); // Launching Task1
+	task2_handler();
+	task3_handler();
+	task4_handler();
 
 	while(1)
 	{
@@ -71,6 +74,7 @@ void task1_handler(void)
 	while(1)
 	{
 		GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_5);
+		//task_delay(2000);
 	}
 }
 void task2_handler(void)

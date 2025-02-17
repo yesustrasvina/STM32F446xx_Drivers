@@ -39,8 +39,11 @@
 #define DUMMY_XPSR			0x1000000U // T_Bit = 1
 #define EXC_RETURN			0xFFFFFFFDU /// Return to thread mode and use PSP
 
-#define TASK_RUNNING_STATE 0x00
-#define TASK_BLOCKED_STATE 0xFF
+#define TASK_RUNNING_STATE 		0x00
+#define TASK_BLOCKED_STATE 		0xFF
+
+#define INTERRUPT_ENABLE()		do{ __asm volatile ("MOV R0, #0x1"); __asm volatile("MSR PRIMASK,R0"); } while(0)
+#define INTERRUPT_DISABLE()		do{ __asm volatile ("MOV R0, #0x0"); __asm volatile("MSR PRIMASK,R0"); } while(0)
 
 /* Task Control Block (TCB) Structure Definition */
 typedef struct
@@ -64,6 +67,8 @@ void update_global_tick_count(void);
 __attribute__((naked)) void PendSV_Handler(void);
 void save_psp_value(uint32_t current_psp_value);
 void unblock_tasks(void);
+void task_delay(uint32_t tick_count);
+void schedule(void);
 
 /*Task Handlers*/
 void task1_handler(void);

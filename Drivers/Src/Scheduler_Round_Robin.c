@@ -260,9 +260,46 @@ void update_next_task(void)
 	}
 }
 
+/********************************************
+ * @fn			- task_delay
+ *
+ * @brief		- Blocks the current task for a specified number of ticks.
+ *
+ * @param		- Number of ticks to block the task.
+ *
+ * @return		- None
+ */
+void task_delay(uint32_t tick_count)
+{
+	/* Disable interrupts to prevent task switches while modifying task state */
+	INTERRUPT_DISABLE();
 
+	if(current_task != 0)
+	{
+		/* Set the delay (in tick counts), 1 tick = 1ms */
+		user_tasks[current_task].block_count = g_tick_count + tick_count;
 
+		/* Change the current task state to BLOCKED */
+		user_tasks[current_task].current_state = TASK_BLOCKED_STATE;
+	}
+	/* Re-enable interrupts to allow task switching again */
+	INTERRUPT_ENABLE();
+}
 
+/********************************************
+ * @fn			- schedule
+ *
+ * @brief		- Triggers the PendSV exception to perform task switching.
+ *
+ * @param		- None
+ *
+ * @return		- None
+ */
+void schedule(void)
+{
+	//Pend the PendSV exception
+	*ICSR |= (1 << PENDSVSET_BIT);
+}
 
 
 
